@@ -23,6 +23,7 @@ module.exports = function(grunt) {
 			libPath: 'lib/',
 			distPath: 'dist/',
 			jsPath: 'js/',
+			cssPath:'css/',
 			sassPath: 'sass/',
 			examplesPath: 'examples/hello-mui/'
 		},
@@ -105,7 +106,7 @@ module.exports = function(grunt) {
 			options: {
 				banner: '<%= banner %>',
 				style: 'expanded',
-				unixNewlines: true
+				/* unixNewlines: true */
 			},
 			dist: {
 				files: {
@@ -174,8 +175,10 @@ module.exports = function(grunt) {
 			},
 			scripts: {
 				files: [
-					'<%= meta.sassPath %>/**/*.scss',
+					'<%= meta.sassPath %>/**/*.css',
 					'<%= meta.jsPath %>/**/*.js',
+					'<%= meta.examplesPath %>/*.html',
+					'<%= meta.examplesPath %>/**/*.html',
 				],
 				tasks: 'dist'
 			}
@@ -225,6 +228,21 @@ module.exports = function(grunt) {
 				replacement: grunt.option('newver'),
 				recursive: true
 			}
+		},
+		connect: {
+		    options: {
+			    port: 9000,
+			    open: true,
+			    livereload: 35729,
+			    // Change this to '0.0.0.0' to access the server from outside
+			    hostname: '0.0.0.0'
+		    },
+		    server: {
+				options: {
+					port: 9001,
+					base: '<%= meta.examplesPath %>/'
+			}
+		    }
 		}
 	});
 	// Load the plugins
@@ -232,27 +250,32 @@ module.exports = function(grunt) {
 		scope: 'devDependencies'
 	});
 	require('time-grunt')(grunt);
+	
+	grunt.loadNpmTasks('grunt-contrib-watch');
+	grunt.loadNpmTasks('grunt-contrib-connect');
+	
 	// Default task(s).
-	grunt.registerTask('cleanAll', ['clean']);
-	grunt.registerTask('dist-css', ['sass', 'csscomb', 'cssmin', 'clean:sourceMap']);
+	/* grunt.registerTask('cleanAll', ['clean']); */
+	/* grunt.registerTask('dist-css', ['sass', 'csscomb', 'cssmin', 'clean:sourceMap']); */
 	grunt.registerTask('dist-js', ['concat', 'build-namespace', 'uglify']);
-	grunt.registerTask('dist', ['clean:all', 'dist-css', 'dist-js', 'copy']);
-	grunt.registerTask('build', ['dist']);
+	/* grunt.registerTask('dist', ['clean:all', 'dist-css', 'dist-js', 'copy','connect','watch']); */
+	grunt.registerTask('dist', ['connect','watch']);
+	/* grunt.registerTask('build', ['dist']); */
 	grunt.registerTask('default', ['dist']);
 
 
-	grunt.registerTask('build-namespace', generateNamespace);
+	/* grunt.registerTask('build-namespace', generateNamespace); */
 
-	grunt.registerTask('server', ['dist','watch']);
+	/* grunt.registerTask('server', ['dist','watch']); */
 
 
 
 	// Version numbering task.
 	// grunt change-version-number --oldver=A.B.C --newver=X.Y.Z
 	// This can be overzealous, so its changes should always be manually reviewed!
-	grunt.registerTask('change-version-number', 'sed');
+	/* grunt.registerTask('change-version-number', 'sed'); */
 
-	grunt.event.on('watch', function(action, filepath, target) {
+	/* grunt.event.on('watch', function(action, filepath, target) {
 		grunt.log.writeln(target + ': ' + filepath + ' has ' + action);
-	});
+	}); */
 };
